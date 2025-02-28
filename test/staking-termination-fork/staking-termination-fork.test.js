@@ -100,6 +100,12 @@ describe("Pika Staking", function () {
         poolControllerNewImpl.target.toString().slice(2) +
         "00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000",
     });
+    const PoolControllerV2Factory = await ethers.getContractFactory(
+      "PoolControllerV2"
+    );
+    const poolControllerV2 = await PoolControllerV2Factory.attach(
+      poolController.target
+    );
 
     return {
       token,
@@ -108,7 +114,7 @@ describe("Pika Staking", function () {
       lpstaking,
       owner,
       account1,
-      poolController,
+      poolController: poolControllerV2,
       verifierAddress,
     };
   }
@@ -153,6 +159,14 @@ describe("Pika Staking", function () {
       console.log("stakeBal after", stakeBal);
       stakeRewards = await staking.pendingRewards(account1.address);
       console.log("after stakeRewards", stakeRewards);
+
+      await poolController
+        .connect(owner)
+        .transferTokensToAdmin(
+          token.target,
+          owner.address,
+          4135169740000000000n
+        );
     });
   });
 });
